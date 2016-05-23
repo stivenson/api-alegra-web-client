@@ -38,6 +38,7 @@ class Invoice extends AbstractApi {
     if(self::API_TOKEN != null){
 
       $parameters = '?authtoken='.self::API_TOKEN.'&organization_id='.self::API_ID_ORGANIZATION;
+
       $res = $this->guzzle->get(self::API_ENTITIES_URL.$entity_name.$parameters);
 
       return json_decode($res->getBody());
