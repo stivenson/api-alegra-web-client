@@ -19,8 +19,6 @@ class Api extends AbstractApi
       throw new \Exception(sprintf('The %s method doesn\'t exists', $api_name));
     }
 
-    $this->guzzle = new GuzzleHttp\Client();
-
     $this->api = new $className();
   }
 
@@ -28,15 +26,15 @@ class Api extends AbstractApi
   /**
    * @return array
    */
-  public function getListEntity(string $entity_name){
+  public function getListEntity($entity_name){
     return $this->api->getListEntity($entity_name);
   }
 
   /**
    * @param string $data
    */
-  public function getTokenAutentication(string $data){
-    $this->api->getTokenAutentication($data);
+  public function getTokenAutentication(){
+    $this->api->getTokenAutentication();
   }
 
 

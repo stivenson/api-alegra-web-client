@@ -21,14 +21,14 @@ abstract class AbstractApi {
 
     /**
      * @return array
-     * @param string $entity_name
+     * @param $entity_name
      */
-    abstract public function getListEntity(string $entity_name);
+    abstract public function getListEntity($entity_name);
 
     /**
      * @param string $data
      */
-    abstract public function getTokenAutentication(string $data);
+    abstract public function getTokenAutentication();
 
 
 }

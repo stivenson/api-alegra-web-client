@@ -1,6 +1,9 @@
 <?php
 
 namespace Externalapis\Zoho;
+use Externalapis\AbstractApi;
+use GuzzleHttp\Client as Gclient;
+use Session;
 
 class Invoice extends AbstractApi {
   /**
@@ -11,7 +14,8 @@ class Invoice extends AbstractApi {
   const API_ID_ORGANIZATION = '628410349'; //  content in .env file *****
   const API_SCOPE = 'ZohoInvoice/invoiceapi';
   const API_EMAIL_ID = 'stivenson.rpm@gmail.com'; // content in .env file *****
-  const API_PASSWORD = 'stivenson.rpm@gmail.com'; // content in .env file *****
+  const API_PASSWORD = 'mrsmrs5814302'; // content in .env file *****
+  const API_TOKEN = '5daa6936795c3e6bb5ae247537938e8d'; // content in .env file *****
 
   /**
    * @var string $token
@@ -19,28 +23,53 @@ class Invoice extends AbstractApi {
   private static $token = null;
 
 
+  public function __construct(){
+    $this->guzzle = new Gclient();
+    $this->guzzle->setDefaultOption('verify', false);
+  }
+
+
   /**
    * @return array
+   * @param string $entity_name
    */
-  public function getListEntity(string $entity_name){
+  public function getListEntity($entity_name){
 
-    return $this->guzzle->request('GET', self::API_ENTITIES_URL.$entity_name, [
-        'authtoken' => self::$token,
-        'organization_id'= self::API_ID_ORGANIZATION
-    ]);
+    if(self::API_TOKEN != null){
+
+      $parameters = '?authtoken='.self::API_TOKEN.'&organization_id='.self::API_ID_ORGANIZATION;
+      $res = $this->guzzle->get(self::API_ENTITIES_URL.$entity_name.$parameters);
+
+      return json_decode($res->getBody());
+
+    }else{
+      return false;
+    }
 
   }
 
   /**
-   * @param string $data
+   * Description
+   * optional use
    */
-  public function getTokenAutentication(string $data){
+  public function getTokenAutentication(){
 
-    self::$token = $this->guzzle->request('POST', self::API_GET_TOKEN_URL, [
-        'SCOPE' => self::API_SCOPE,
-        'EMAIL_ID'= self::API_EMAIL_ID,
-        'PASSWORD' = self::API_PASSWORD
-    ]);
+    if(self::$token == null){
+
+      $res = $this->guzzle->post(self::API_GET_TOKEN_URL, 
+            ['body' => [
+              'SCOPE' => self::API_SCOPE,
+              'EMAIL_ID'=> self::API_EMAIL_ID,
+              'PASSWORD' => self::API_PASSWORD
+            ]]);
+
+      $lines = explode(PHP_EOL, $res->getBody());
+
+      $pureStringToken = substr($lines[2], strpos($lines[2], "=") + 1);
+
+      self::$token  = $pureStringToken;
+
+    }
 
   }
 
